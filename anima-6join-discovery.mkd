@@ -1,0 +1,107 @@
+---
+title: GRASP discovery of Registrar by Join Assistant
+abbrev: 6join discovery
+docname: draft-richardson-anima-6join-discovery-00
+
+# stand_alone: true
+
+ipr: trust200902
+area: Internet
+wg: 6lo Working Group
+kw: Internet-Draft
+cat: info
+
+coding: us-ascii
+pi:    # can use array (if all yes) or hash here
+#  - toc
+#  - sortrefs
+#  - symrefs
+  toc: yes
+  sortrefs:   # defaults to yes
+  symrefs: yes
+
+author:
+      -
+        ins: M. Richardson
+        name: Michael Richardson
+        org: Sandelman Software Works
+        email: mcr+ietf@sandelman.ca
+
+
+normative:
+  RFC2119:
+  RFC7228:
+  I-D.ietf-anima-grasp:
+
+informative:
+  I-D.richardson-6tisch-dtsecurity-secure-join:
+  I-D.ietf-anima-bootstrapping-keyinfra:
+
+--- abstract
+
+This document describes an Autonomic System Agent (ASA) that permits discovery of
+a registrar, as well as determination via GRASP if a registrar would be willing
+to consider enrolling a specific node.
+
+--- middle
+
+# Introduction        {#problems}
+
+{{I-D.richardson-6tisch-dtsecurity-secure-join}} and {{I-D.ietf-anima-bootstrapping-keyinfra}}
+describe autonomic protocols wherein a New Entity or Pledge is joined to a network. While the
+two protocols are different, in each case they make use of a helper, called the Join Assistant
+which is a single layer-2 hop from the pledge.
+
+The Join Assistant relays packets to and from the Registrar using a circuit proxy, or with an
+IPIP tunnel.  In order to do this, the Join Assistant needs to know the address of the Registrar.
+
+GRASP has a discovery mechanism that permits the Join Assistant to discover the location
+of the Registrar, and then, it can use the negotiation part of the protocol to communicate
+the existance of the new Pledge/New Entity to the Registrar.
+
+## Terminology          {#Terminology}
+
+In this document, the key words "MUST", "MUST NOT", "REQUIRED",
+"SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
+{{!RFC2119}} and indicate requirement levels for compliant STuPiD
+implementations.
+
+# Autonomic System Agent Description
+
+This ASA has an objective named "6JOIN".
+
+The objective takes two arguments: the EUI-64 or IID of the new pledge, and an enumerated type
+to indicate the kind of join process being pursued.  The current list of join process mechanism are:
+
+1. "6p-ipip"
+2. "https-est"
+
+## CDDL for objective
+
+     objective = ["6JOIN", objective-flags, loop-count,
+                  [IID, join-method]]
+
+     loop-count = 0..255         ; as in the GRASP specification
+     objective-flags /=          ; as in the GRASP specification
+     IID = bytes .size 8         ; the IID of the New Entity or Pledge
+     join-method /= "6p-ipip"    ; the Join method is outgoing CoAP-6p
+                                 ; with an IPIP encapsulation
+     join-method /= "https-est"  ; the Join method is EST over HTTP
+
+
+# Security Considerations
+
+TBD.
+
+# IANA Considerations
+
+This allocates a new entry in the GRASP Objective Names Table with the name "6JOIN".
+
+--- back
+
+# appendix
+
+insert appendix here
+
+--- fluff
